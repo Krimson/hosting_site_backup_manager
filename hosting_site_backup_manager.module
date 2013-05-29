@@ -331,8 +331,15 @@ function hosting_site_backup_manager_download($site, $bid) {
     if (variable_get('hosting_site_backup_manager_export', 0)) {
       $symlink = $docroot . '/backup-exports/' . $client->uname . '/' . basename($source->filename);
     } else {
+      // Get file form standard location
       $symlink = $source->filename;
     }
+
+    // Check if we have access to standard location.
+    if (!is_readable($symlink)) {
+      drupal_set_message(t('File "%file"is not readable.', array('#file' =>$symlink)), 'error');
+    }
+
 
     if ($fd = @fopen($symlink, 'rb')) {
 
