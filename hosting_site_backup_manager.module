@@ -337,7 +337,7 @@ function hosting_site_backup_manager_download($site, $bid) {
 
     // Check if we have access to standard location.
     if (!is_readable($symlink)) {
-      drupal_set_message(t('File "%file"is not readable.', array('#file' =>$symlink)), 'error');
+      drupal_set_message(t('File "%file"is not readable.', array('%file' =>$symlink)), 'error');
     }
 
 
