@@ -16,6 +16,16 @@
 function hosting_site_backup_manager_menu() {
   $items = array();
 
+  $items['admin/hosting/backup_manager'] = array(
+    'title' => 'Backups manager',
+    'description' => 'Configuration fot the backups manager',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hosting_site_backup_manager_settings'),
+    'access arguments' => array('administer hosting backup manager'),
+    'type' => 'MENU_LOCAL_TASK',
+    'file' => 'hosting_site_backup_manager.admin.inc',
+  );
+
   $items['node/%hosting_site_node/backups'] = array(
     'title' => 'Backups',
     'description' => 'List of backups of this website',
@@ -52,7 +62,7 @@ function hosting_site_backup_manager_menu() {
     'page callback' => 'hosting_site_backup_manager_delete',
     'page arguments' => array(1, 4),
     'access callback' => 'node_access',
-    'access arguments' => array('view', 1),
+    'access arguments' => array('delete', 1),
     'type' => MENU_CALLBACK,
   );
 
@@ -62,7 +72,7 @@ function hosting_site_backup_manager_menu() {
     'page callback' => 'hosting_site_backup_manager_restore',
     'page arguments' => array(1, 4),
     'access callback' => 'node_access',
-    'access arguments' => array('view', 1),
+    'access arguments' => array('update', 1),
     'type' => MENU_CALLBACK,
   );
 
@@ -78,6 +88,13 @@ function hosting_site_backup_manager_menu() {
 
 
   return $items;
+}
+
+/**
+ * Implements hook_perm().
+ */
+function hosting_site_backup_manager_perm() {
+  return array('administer hosting backup manager');
 }
 
 /**
