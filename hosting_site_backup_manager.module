@@ -328,7 +328,11 @@ function hosting_site_backup_manager_download($site, $bid) {
     // Get Document Root.
     $docroot = _hosting_site_backup_manager_getaegirroot();
 
-    $symlink = $docroot . '/backup-exports/' . $client->uname . '/' . basename($source->filename);
+    if (variable_get('hosting_site_backup_manager_export', 0)) {
+      $symlink = $docroot . '/backup-exports/' . $client->uname . '/' . basename($source->filename);
+    } else {
+      $symlink = $source->filename;
+    }
 
     if ($fd = @fopen($symlink, 'rb')) {
 
@@ -433,18 +437,25 @@ function hosting_site_backup_manager_backups_table($site) {
     $row['description'] = filter_xss($object->description) . "<br />" . format_size($object->size) . " - " . format_date($object->timestamp, 'short');
 
     $actions = array();
-    // @todo: Add check if the backup can be restored to current platform?
-    /* Add download button */
-    $downloadstatus = (_hosting_site_backup_manager_isfileavailable($site, $object->bid) && !hosting_task_outstanding($site->nid, 'remove_export_backup'));
-    $actions['download'] = _hosting_task_button(t('Get'), 'node/' . $site->nid . '/backup/download/' . $object->bid, t('Download the backup'), '', $downloadstatus, FALSE, FALSE);
 
-    /* Add export backup button */
-    $exportstatus = ($buttonstatus && !$downloadstatus);
-    $actions['export_backup'] = _hosting_task_button(t('Export'), 'node/' . $site->nid . '/backup/export/' . $object->bid, t('Make the backup exportable'), '', $exportstatus, FALSE, FALSE);
+    if (variable_get('hosting_site_backup_manager_export', 0)) {
+      /* Add download button */
+      $downloadstatus = (_hosting_site_backup_manager_isfileavailable($site, $object->bid) && !hosting_task_outstanding($site->nid, 'remove_export_backup'));
+      $actions['download'] = _hosting_task_button(t('Get'), 'node/' . $site->nid . '/backup/download/' . $object->bid, t('Download the backup'), '', $downloadstatus, FALSE, FALSE);
+
+      /* Add export backup button */
+      $exportstatus = ($buttonstatus && !$downloadstatus);
+      $actions['export_backup'] = _hosting_task_button(t('Export'), 'node/' . $site->nid . '/backup/export/' . $object->bid, t('Make the backup exportable'), '', $exportstatus, FALSE, FALSE);
+    } else {
+      /* Add download button*/
+      $actions['download'] = _hosting_task_button(t('Get'), 'node/' . $site->nid . '/backup/download/' . $object->bid, t('Download the backup'), '', TRUE, FALSE, FALSE);
+    }
 
     /* Add delete button */
     $actions['delete'] = _hosting_task_button(t('Delete'), 'node/' . $site->nid . '/backup/delete/' . $object->bid, t('Delete the backup'), '', $buttonstatus, TRUE, FALSE);
+
     /* Add restore button */
+    // @todo: Add check if the backup can be restored to current platform?
     $actions['restore'] = _hosting_task_button(t('Restore'), 'node/' . $site->nid . '/backup/restore/' . $object->bid, t('Restore the backup'), '', $buttonstatus, TRUE, FALSE);
 
     $row['actions'] = array(
