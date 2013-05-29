@@ -1,3 +1,5 @@
+This is a fork of the http://drupal.org/project/hosting_site_backup_manager module.
+
 Hosting site Backup Manager
 ======================================
 
