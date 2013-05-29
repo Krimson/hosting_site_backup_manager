@@ -61,8 +61,7 @@ function hosting_site_backup_manager_menu() {
     'description' => 'Delete the selected backup',
     'page callback' => 'hosting_site_backup_manager_delete',
     'page arguments' => array(1, 4),
-    'access callback' => 'node_access',
-    'access arguments' => array('delete', 1),
+    'access arguments' => array('hosting backup delete', 1),
     'type' => MENU_CALLBACK,
   );
 
@@ -71,8 +70,7 @@ function hosting_site_backup_manager_menu() {
     'description' => 'Restore the selected backup',
     'page callback' => 'hosting_site_backup_manager_restore',
     'page arguments' => array(1, 4),
-    'access callback' => 'node_access',
-    'access arguments' => array('update', 1),
+    'access arguments' => array('hosting backup restore', 1),
     'type' => MENU_CALLBACK,
   );
 
@@ -94,7 +92,7 @@ function hosting_site_backup_manager_menu() {
  * Implements hook_perm().
  */
 function hosting_site_backup_manager_perm() {
-  return array('administer hosting backup manager');
+  return array('administer hosting backup manager', 'hosting backup delete', 'hosting backup restore');
 }
 
 /**
@@ -459,11 +457,13 @@ function hosting_site_backup_manager_backups_table($site) {
     }
 
     /* Add delete button */
-    $actions['delete'] = _hosting_task_button(t('Delete'), 'node/' . $site->nid . '/backup/delete/' . $object->bid, t('Delete the backup'), '', $buttonstatus, TRUE, FALSE);
+    $del_buttonstatus = ($buttonstatus && user_access('hosting backup delete'));
+    $actions['delete'] = _hosting_task_button(t('Delete'), 'node/' . $site->nid . '/backup/delete/' . $object->bid, t('Delete the backup'), '', $del_buttonstatus, TRUE, FALSE);
 
     /* Add restore button */
     // @todo: Add check if the backup can be restored to current platform?
-    $actions['restore'] = _hosting_task_button(t('Restore'), 'node/' . $site->nid . '/backup/restore/' . $object->bid, t('Restore the backup'), '', $buttonstatus, TRUE, FALSE);
+    $res_buttonstatus = ($buttonstatus && user_access('hosting backup restore'));
+    $actions['restore'] = _hosting_task_button(t('Restore'), 'node/' . $site->nid . '/backup/restore/' . $object->bid, t('Restore the backup'), '', $res_buttonstatus, TRUE, FALSE);
 
     $row['actions'] = array(
       'data' => implode('', $actions),
