@@ -357,7 +357,9 @@ function hosting_site_backup_manager_download($site, $bid) {
       fclose($fd);
       // File downloaded so delete the file.
       // Start the task.
-      hosting_add_task($site->nid, 'remove_export_backup', array('export' => $symlink));
+      if (variable_get('hosting_site_backup_manager_export', 0)) {
+        hosting_add_task($site->nid, 'remove_export_backup', array('export' => $symlink));
+      }
       exit();
     }
     else {
