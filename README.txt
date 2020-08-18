@@ -1,3 +1,6 @@
+This repo has been moved to Bitbucket.
+https://bitbucket.org/appno/hosting_site_backup_manager/src/6.x-1.x/
+
 This is a fork of the http://drupal.org/project/hosting_site_backup_manager module.
 
 Hosting site Backup Manager
